@@ -23,6 +23,30 @@
 
 ❌ 它不是：一个要老人学会的 App、一个智能音箱技能、一个陪聊聊天框。**电话本身，就是产品界面。**
 
+## 产品预览
+
+| 来电弹出 | 通话中（带记忆开场） | 通话结束页 |
+|---|---|---|
+| <img src="docs/screenshots/incoming.jpg" width="260"/> | <img src="docs/screenshots/incall.jpg" width="260"/> | <img src="docs/screenshots/ended.jpg" width="260"/> |
+
+| 企业微信简报（推给子女） | 首页 | 本地通话记录 |
+|---|---|---|
+| <img src="docs/screenshots/briefing.jpg" width="260"/> | <img src="docs/screenshots/home.jpg" width="260"/> | <img src="docs/screenshots/records.jpg" width="260"/> |
+
+<p align="center"><img src="docs/screenshots/cover.jpg" width="720" alt="三屏演示：来电弹出 / 通话中 / 企业微信简报"/></p>
+
+## 真实运行示例：会成长的记忆
+
+> **第 1 通电话**：“我今天腌了腊肉，等小军回来吃”“孙子小宝下个月过生日，想买个书包”
+> 系统自动沉淀 → 重要的人（小军、小宝 8 岁）· 生活（腌制腊肉）· 记忆（生日送礼，重要度 4/5）
+
+<p align="center">
+<img src="docs/screenshots/incall.jpg" width="240"/> <img src="docs/screenshots/briefing.jpg" width="240"/>
+</p>
+
+> **第 2 通电话开场**：“奶奶，腊肉腌得咋样了？小宝的书包挑好款式没？”
+> 就这一句话，老人就知道——有个东西，真的在听我说话。
+
 ## 核心功能（全部已实现）
 
 - **每日定时来电**：云服务器到点自动呼叫，手机全屏弹出来电界面（悬浮窗实现，兼容 vivo 等国产 ROM 的后台拦截）
