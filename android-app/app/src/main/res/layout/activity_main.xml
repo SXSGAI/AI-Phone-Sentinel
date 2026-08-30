@@ -1,0 +1,855 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F2E6CE">
+
+    <FrameLayout
+        android:id="@+id/content"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <!-- ═══════ Tab 1：首页 ═══════ -->
+        <LinearLayout
+            android:id="@+id/tabHome"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="22dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="小暖"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                android:textColor="#4E5D49"
+                android:layout_marginTop="14dp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="AI 亲情陪伴 · 每晚一通电话"
+                android:textSize="13sp"
+                android:textColor="#6E8B74"
+                android:layout_marginTop="4dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/card_white"
+                android:padding="20dp"
+                android:layout_marginTop="22dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="当前陪伴对象"
+                    android:textSize="13sp"
+                    android:textColor="#8A9184" />
+                <TextView
+                    android:id="@+id/homeTarget"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="—"
+                    android:textSize="19sp"
+                    android:textStyle="bold"
+                    android:textColor="#3E4A3E"
+                    android:layout_marginTop="6dp" />
+                <TextView
+                    android:id="@+id/homeChild"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="由子女设置"
+                    android:textSize="13sp"
+                    android:textColor="#6E8B74"
+                    android:layout_marginTop="3dp" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/startBtn"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:text="📞 开始通话（小暖打给老人）"
+                android:textSize="16sp"
+                android:background="@drawable/btn_green"
+                android:textColor="#FFFFFF"
+                android:layout_marginTop="20dp" />
+
+            <Button
+                android:id="@+id/incomingBtn"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:text="📲 接听：老人主动打给小暖"
+                android:textSize="15sp"
+                android:background="@drawable/btn_outline"
+                android:textColor="#4E5D49"
+                android:layout_marginTop="12dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="通话结束后自动生成摘要并推送简报给子女"
+                android:textSize="12sp"
+                android:textColor="#A89A7C"
+                android:layout_marginTop="16dp"
+                android:layout_gravity="center" />
+        </LinearLayout>
+
+        <!-- ═══════ Tab 2：记录 ═══════ -->
+        <LinearLayout
+            android:id="@+id/tabRecords"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="22dp"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="本地通话记录"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="#4E5D49"
+                android:layout_marginTop="14dp" />
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_marginTop="14dp">
+                <TextView
+                    android:id="@+id/recordsView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    android:lineSpacingExtra="4dp"
+                    android:textColor="#3E4A3E"
+                    android:text="暂无记录" />
+            </ScrollView>
+
+            <Button
+                android:id="@+id/clearRecordsBtn"
+                android:layout_width="match_parent"
+                android:layout_height="46dp"
+                android:text="清空本地记录"
+                android:textSize="14sp"
+                android:background="@drawable/btn_outline"
+                android:textColor="#B0563F"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="4dp" />
+        </LinearLayout>
+
+        <!-- ═══════ Tab 3：设置 ═══════ -->
+        <LinearLayout
+            android:id="@+id/tabSettings"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="22dp"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="设置"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="#4E5D49"
+                android:layout_marginTop="14dp" />
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_marginTop="12dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="AI 面对的对象（对话据此进行）"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="#6E8B74" />
+
+                    <EditText
+                        android:id="@+id/etCallName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="对老人的称呼（如：妈妈 / 王阿姨）"
+                        android:textSize="14sp"
+                        android:layout_marginTop="10dp"
+                        android:inputType="text" />
+                    <EditText
+                        android:id="@+id/etElderName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="老人姓名（可选）"
+                        android:textSize="14sp"
+                        android:layout_marginTop="8dp"
+                        android:inputType="text" />
+                    <EditText
+                        android:id="@+id/etChildName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="子女姓名（谁为她配置的小暖）"
+                        android:textSize="14sp"
+                        android:layout_marginTop="8dp"
+                        android:inputType="text" />
+                    <EditText
+                        android:id="@+id/etHobbies"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="兴趣爱好（、分隔，如：广场舞、做饭、戏曲）"
+                        android:textSize="14sp"
+                        android:layout_marginTop="8dp"
+                        android:inputType="text" />
+                    <EditText
+                        android:id="@+id/etHealth"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="健康情况（；分隔，如：高血压；腿脚不好）"
+                        android:textSize="14sp"
+                        android:layout_marginTop="8dp"
+                        android:inputType="text" />
+                    <EditText
+                        android:id="@+id/etTaboo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="忌讳话题（；分隔，AI 绝不提起）"
+                        android:textSize="14sp"
+                        android:layout_marginTop="8dp"
+                        android:inputType="text" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="人格设置（定制小暖的性格）"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="#6E8B74"
+                        android:layout_marginTop="20dp" />
+
+                    <EditText
+                        android:id="@+id/etPersonaStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="小暖性格（如：温暖体贴 / 开朗幽默 / 安静陪伴）"
+                        android:textSize="14sp"
+                        android:layout_marginTop="10dp"
+                        android:inputType="text" />
+
+                    <EditText
+                        android:id="@+id/etPersonaDialect"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="语言风格（普通话 / 四川话味 / 东北味 / 粤语味）"
+                        android:textSize="14sp"
+                        android:layout_marginTop="8dp"
+                        android:inputType="text" />
+
+                    <EditText
+                        android:id="@+id/etPersonaTopics"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="话题偏好（如：多聊养生和戏曲，少问学习）"
+                        android:textSize="14sp"
+                        android:layout_marginTop="8dp"
+                        android:inputType="text" />
+
+                    <EditText
+                        android:id="@+id/etPersonaCustom"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="自定义人设补充（自由填写）"
+                        android:textSize="14sp"
+                        android:layout_marginTop="8dp"
+                        android:inputType="text" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="每日定时来电"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="#6E8B74"
+                        android:layout_marginTop="20dp" />
+
+                    <EditText
+                        android:id="@+id/etCallTime"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="每天几点打来（HH:MM，如 19:00）"
+                        android:textSize="14sp"
+                        android:layout_marginTop="10dp"
+                        android:inputType="time" />
+
+                    <Button
+                        android:id="@+id/guardBtn"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:text="⭕ 开启每日定时守护"
+                        android:textSize="15sp"
+                        android:background="@drawable/btn_outline"
+                        android:textColor="#4E5D49"
+                        android:layout_marginTop="10dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="服务器"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="#6E8B74"
+                        android:layout_marginTop="20dp" />
+
+                    <EditText
+                        android:id="@+id/etUrl"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="如 http://192.168.3.104:8000"
+                        android:textSize="14sp"
+                        android:layout_marginTop="10dp"
+                        android:inputType="textUri" />
+
+                    <Button
+                        android:id="@+id/saveSettingsBtn"
+                        android:layout_width="match_parent"
+                        android:layout_height="52dp"
+                        android:text="保存设置"
+                        android:textSize="16sp"
+                        android:background="@drawable/btn_green"
+                        android:textColor="#FFFFFF"
+                        android:layout_marginTop="18dp"
+                        android:layout_marginBottom="10dp" />
+                </LinearLayout>
+            </ScrollView>
+        </LinearLayout>
+
+        <!-- ═══════ 通话流程（全屏覆盖层） ═══════ -->
+        <FrameLayout
+            android:id="@+id/callOverlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <!-- 拨号中 -->
+            <LinearLayout
+                android:id="@+id/screenDial"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="🤖"
+                    android:textSize="52sp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="小暖"
+                    android:textSize="26sp"
+                    android:textColor="#FFFFFF"
+                    android:layout_marginTop="14dp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="正在呼叫 …"
+                    android:textSize="15sp"
+                    android:textColor="#B8C4CC"
+                    android:layout_marginTop="12dp" />
+            </LinearLayout>
+
+            <!-- 来电 -->
+            <LinearLayout
+                android:id="@+id/screenIncoming"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:background="@drawable/bg_call"
+                android:gravity="center_horizontal"
+                android:visibility="gone">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="90dp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="小暖"
+                    android:textSize="36sp"
+                    android:textColor="#FFFFFF"
+                    android:layout_marginTop="30dp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="AI 智能陪伴来电"
+                    android:textSize="17sp"
+                    android:textColor="#CFD8DC"
+                    android:layout_marginTop="12dp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/chip_bg"
+                    android:text="🤖 由子女为老人配置的 AI 陪伴"
+                    android:textSize="13sp"
+                    android:textColor="#8FD6AE"
+                    android:paddingLeft="14dp"
+                    android:paddingRight="14dp"
+                    android:paddingTop="6dp"
+                    android:paddingBottom="6dp"
+                    android:layout_marginTop="16dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="56dp"
+                            android:layout_height="56dp"
+                            android:background="@drawable/circle_gray"
+                            android:text="💬"
+                            android:textSize="22sp"
+                            android:gravity="center" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="短信"
+                            android:textSize="13sp"
+                            android:textColor="#DFE8EC"
+                            android:layout_marginTop="8dp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="56dp"
+                            android:layout_height="56dp"
+                            android:background="@drawable/circle_gray"
+                            android:text="⏰"
+                            android:textSize="22sp"
+                            android:gravity="center" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="提醒"
+                            android:textSize="13sp"
+                            android:textColor="#DFE8EC"
+                            android:layout_marginTop="8dp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:layout_marginBottom="60dp"
+                    android:layout_marginLeft="60dp"
+                    android:layout_marginRight="60dp">
+
+                    <FrameLayout
+                        android:id="@+id/declineBtn"
+                        android:layout_width="0dp"
+                        android:layout_height="76dp"
+                        android:layout_weight="1">
+                        <TextView
+                            android:layout_width="76dp"
+                            android:layout_height="76dp"
+                            android:background="@drawable/circle_red"
+                            android:text="📵"
+                            android:textSize="30sp"
+                            android:gravity="center"
+                            android:layout_gravity="center" />
+                    </FrameLayout>
+
+                    <FrameLayout
+                        android:id="@+id/answerBtn"
+                        android:layout_width="0dp"
+                        android:layout_height="76dp"
+                        android:layout_weight="1">
+                        <TextView
+                            android:id="@+id/answerCircle"
+                            android:layout_width="76dp"
+                            android:layout_height="76dp"
+                            android:background="@drawable/circle_green"
+                            android:text="📞"
+                            android:textSize="30sp"
+                            android:gravity="center"
+                            android:layout_gravity="center" />
+                    </FrameLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- 通话中 -->
+            <LinearLayout
+                android:id="@+id/screenIncall"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:background="@drawable/bg_call"
+                android:gravity="center_horizontal"
+                android:visibility="gone">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="小暖"
+                    android:textSize="30sp"
+                    android:textColor="#FFFFFF"
+                    android:layout_marginTop="10dp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="AI 智能陪伴 · HD"
+                    android:textSize="14sp"
+                    android:textColor="#9FB0BA"
+                    android:layout_marginTop="6dp" />
+                <TextView
+                    android:id="@+id/callTimer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="00:00"
+                    android:textSize="16sp"
+                    android:textColor="#FFFFFF"
+                    android:layout_marginTop="4dp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="🛡 智能安全检测中..."
+                    android:textSize="13sp"
+                    android:textColor="#93A5B0"
+                    android:layout_marginTop="6dp" />
+
+                <ScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginLeft="18dp"
+                    android:layout_marginRight="18dp"
+                    android:layout_marginBottom="6dp">
+                    <TextView
+                        android:id="@+id/log"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="15sp"
+                        android:lineSpacingExtra="5dp"
+                        android:textColor="#E8F0F4" />
+                </ScrollView>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:layout_marginBottom="14dp">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical">
+                        <TextView
+                            android:id="@+id/micCircle"
+                            android:layout_width="58dp"
+                            android:layout_height="58dp"
+                            android:background="@drawable/circle_gray"
+                            android:text="🎙"
+                            android:textSize="24sp"
+                            android:gravity="center" />
+                        <TextView
+                            android:id="@+id/micLabel"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="点这里说话"
+                            android:textSize="12sp"
+                            android:textColor="#DFE8EC"
+                            android:layout_marginTop="6dp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="58dp"
+                            android:layout_height="58dp"
+                            android:background="@drawable/circle_gray"
+                            android:text="⏸"
+                            android:textSize="24sp"
+                            android:gravity="center" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="等待"
+                            android:textSize="12sp"
+                            android:textColor="#DFE8EC"
+                            android:layout_marginTop="6dp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="58dp"
+                            android:layout_height="58dp"
+                            android:background="@drawable/circle_gray"
+                            android:text="➕"
+                            android:textSize="24sp"
+                            android:gravity="center" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="添加"
+                            android:textSize="12sp"
+                            android:textColor="#DFE8EC"
+                            android:layout_marginTop="6dp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:layout_marginBottom="34dp">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="58dp"
+                            android:layout_height="58dp"
+                            android:background="@drawable/circle_gray"
+                            android:text="👤"
+                            android:textSize="24sp"
+                            android:gravity="center" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="联系人"
+                            android:textSize="12sp"
+                            android:textColor="#DFE8EC"
+                            android:layout_marginTop="6dp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical">
+                        <TextView
+                            android:id="@+id/hangBtn"
+                            android:layout_width="72dp"
+                            android:layout_height="72dp"
+                            android:background="@drawable/circle_red"
+                            android:text="📴"
+                            android:textSize="30sp"
+                            android:gravity="center" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="挂断"
+                            android:textSize="12sp"
+                            android:textColor="#DFE8EC"
+                            android:layout_marginTop="6dp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="58dp"
+                            android:layout_height="58dp"
+                            android:background="@drawable/circle_gray"
+                            android:text="🔊"
+                            android:textSize="24sp"
+                            android:gravity="center" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="免提"
+                            android:textSize="12sp"
+                            android:textColor="#DFE8EC"
+                            android:layout_marginTop="6dp" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+            <!-- ═══════ 通话已结束 ═══════ -->
+            <LinearLayout
+                android:id="@+id/screenEnded"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:background="@drawable/bg_call"
+                android:gravity="center_horizontal"
+                android:visibility="gone">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp" />
+
+                <TextView
+                    android:layout_width="110dp"
+                    android:layout_height="110dp"
+                    android:background="@drawable/circle_red"
+                    android:alpha="0.85"
+                    android:text="📵"
+                    android:textSize="44sp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="通话已结束"
+                    android:textSize="26sp"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"
+                    android:layout_marginTop="24dp" />
+
+                <TextView
+                    android:id="@+id/endDuration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="通话时长 00:00"
+                    android:textSize="15sp"
+                    android:textColor="#CFD8DC"
+                    android:layout_marginTop="8dp" />
+
+                <TextView
+                    android:id="@+id/endStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="正在生成通话摘要…"
+                    android:textSize="13sp"
+                    android:textColor="#93A5B0"
+                    android:layout_marginTop="6dp" />
+
+                <TextView
+                    android:id="@+id/endSummary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="26dp"
+                    android:layout_marginRight="26dp"
+                    android:layout_marginTop="14dp"
+                    android:textSize="13sp"
+                    android:lineSpacingExtra="4dp"
+                    android:textColor="#B8C4CC" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingLeft="26dp"
+                    android:paddingRight="26dp"
+                    android:paddingBottom="60dp">
+
+                    <Button
+                        android:id="@+id/btnRedial"
+                        android:layout_width="0dp"
+                        android:layout_height="52dp"
+                        android:layout_weight="1"
+                        android:text="重新拨打"
+                        android:textSize="15sp"
+                        android:background="@drawable/btn_green"
+                        android:textColor="#FFFFFF"
+                        android:layout_marginRight="8dp" />
+
+                    <Button
+                        android:id="@+id/btnBack"
+                        android:layout_width="0dp"
+                        android:layout_height="52dp"
+                        android:layout_weight="1"
+                        android:text="返回"
+                        android:textSize="15sp"
+                        android:background="@drawable/btn_gray"
+                        android:textColor="#FFFFFF"
+                        android:layout_marginLeft="8dp" />
+                </LinearLayout>
+            </LinearLayout>
+        </FrameLayout>
+    </FrameLayout>
+
+    <!-- ═══════ 底部导航 ═══════ -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="58dp"
+        android:orientation="horizontal"
+        android:background="#FFFFFF">
+
+        <TextView
+            android:id="@+id/navHome"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="🏠 首页"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:textColor="#6E8B74" />
+
+        <TextView
+            android:id="@+id/navRecords"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="📋 记录"
+            android:textSize="15sp"
+            android:textColor="#A8A8A0" />
+
+        <TextView
+            android:id="@+id/navSettings"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="⚙️ 设置"
+            android:textSize="15sp"
+            android:textColor="#A8A8A0" />
+    </LinearLayout>
+</LinearLayout>

@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 电话哨兵 · 模拟来电</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; }
+  body { font-family: "Microsoft YaHei", "MiSans", sans-serif; background: #1a1410 radial-gradient(ellipse at 50% -20%, #3d2c1c 0%, #1a1410 65%);
+         display: flex; flex-direction: column; align-items: center; padding: 18px 12px; color: #fff; }
+
+  /* ========= 手机外框 ========= */
+  #phone { position: relative; width: 100%; max-width: 392px; height: min(812px, calc(100vh - 90px));
+           border-radius: 40px; border: 9px solid #000; overflow: hidden; background: #0d141a;
+           box-shadow: 0 30px 80px rgba(0,0,0,.55), inset 0 0 0 1px #2a2a2a; }
+  @media (max-width: 480px) { #phone { height: calc(100vh - 24px); border-radius: 0; border: none; } body { padding: 0; } }
+  .screen { position: absolute; inset: 0; display: flex; flex-direction: column; opacity: 0; pointer-events: none; transition: opacity .45s; }
+  .screen.on { opacity: 1; pointer-events: auto; }
+
+  /* ========= 状态栏 ========= */
+  .statusbar { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px 4px; font-size: 15px; font-weight: 600; z-index: 5; }
+  .recpill { display: flex; align-items: center; gap: 7px; background: #000; border-radius: 20px; padding: 5px 14px; font-size: 13px; }
+  .recdot { width: 11px; height: 11px; border-radius: 50%; background: #ff3b30; }
+  .sright { display: flex; align-items: center; gap: 6px; font-size: 13px; }
+  .batt { border: 1.5px solid #fff; border-radius: 4px; padding: 1px 5px; font-size: 11px; }
+
+  /* ========= 首页（子女侧）========= */
+  #home { align-items: center; justify-content: center; text-align: center; padding: 28px;
+          background: linear-gradient(165deg, #fdf3ec 0%, #f3e2ce 100%); color: #5c3a1a; }
+  #home h1 { font-size: 24px; color: #7a4a21; }
+  #home .sub { color: #a67c4f; font-size: 13px; margin: 6px 0 26px; }
+  .bigbtn { display: block; width: 100%; padding: 15px; font-size: 17px; border: none; border-radius: 16px; cursor: pointer; font-weight: bold; transition: transform .1s; }
+  .bigbtn:active { transform: scale(.97); }
+  .green { background: linear-gradient(135deg, #4caf7d, #3b9d6c); color: #fff; }
+  .ghost { display: inline-block; margin-top: 16px; color: #b08a63; font-size: 14px; text-decoration: none; }
+  #home .card { background: #fff; border-radius: 20px; box-shadow: 0 8px 30px rgba(160,110,60,.18); padding: 28px 24px; width: 100%; max-width: 330px; }
+  #home .warn { margin-top: 12px; font-size: 12px; color: #c0392b; }
+  #home .tip { margin-top: 14px; font-size: 12px; color: #c4a684; line-height: 1.7; }
+
+  /* ========= 拨号中（AI 侧）========= */
+  #dialing { align-items: center; justify-content: center; text-align: center;
+             background: radial-gradient(ellipse at 50% 30%, #223442 0%, #0d141a 70%); }
+  .avatar { width: 92px; height: 92px; border-radius: 50%; background: linear-gradient(135deg, #4caf7d, #2e7d54);
+            display: flex; align-items: center; justify-content: center; font-size: 42px; margin: 0 auto 22px; }
+  .dialname { font-size: 24px; }
+  .dialstatus { margin-top: 12px; font-size: 15px; color: #b8c4cc; }
+  .dots::after { content: ""; animation: dots 1.5s steps(4) infinite; }
+  @keyframes dots { 0% { content: ""; } 25% { content: "."; } 50% { content: ".."; } 75% { content: "..."; } }
+  #dialing .foot { position: absolute; bottom: 46px; left: 0; right: 0; font-size: 12px; color: #5d707c; }
+
+  /* ========= 来电（老人手机）========= */
+  .callbg { position: absolute; inset: 0; background:
+            radial-gradient(ellipse at 20% 15%, rgba(90,120,150,.25), transparent 50%),
+            radial-gradient(ellipse at 80% 70%, rgba(60,90,80,.22), transparent 55%),
+            linear-gradient(160deg, #26323c 0%, #131c24 60%, #0d141a 100%); }
+  .callerbox { text-align: center; margin-top: 9%; z-index: 2; }
+  .callername { font-size: 34px; font-weight: 300; letter-spacing: 1px; }
+  .callernum { font-size: 20px; color: #cfd8dc; margin-top: 10px; letter-spacing: 2px; }
+  .carrier { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 10px; color: #9fb0ba; font-size: 14px; }
+  .hd { font-size: 11px; border: 1px solid #9fb0ba; border-radius: 3px; padding: 0 3px; margin-right: 4px; }
+  .aichip { display: inline-flex; align-items: center; gap: 5px; margin-top: 14px; padding: 5px 13px; border-radius: 20px;
+            background: rgba(76,175,125,.18); border: 1px solid rgba(76,175,125,.5); color: #8fd6ae; font-size: 13px; }
+  .safeline { text-align: center; margin-top: 12px; color: #93a5b0; font-size: 13px; z-index: 2; }
+  .safeline .dots { color: #93a5b0; }
+
+  /* 来电底部按钮 */
+  .incombtns { position: absolute; bottom: 0; left: 0; right: 0; padding: 0 34px 54px; z-index: 2; }
+  .miniopts { display: flex; justify-content: space-around; margin-bottom: 40px; }
+  .mini { display: flex; flex-direction: column; align-items: center; gap: 8px; font-size: 13px; color: #dfe8ec; cursor: pointer; }
+  .mini .c { width: 56px; height: 56px; border-radius: 50%; background: rgba(255,255,255,.13); display: flex; align-items: center; justify-content: center; }
+  .mainopts { display: flex; justify-content: space-between; align-items: center; }
+  .bigc { position: relative; width: 78px; height: 78px; border-radius: 50%; border: none; cursor: pointer;
+          display: flex; align-items: center; justify-content: center; transition: transform .1s; }
+  .bigc:active { transform: scale(.92); }
+  .bigc.decline { background: #f4543f; }
+  .bigc.answer { background: #4cd964; }
+  .bigc svg { width: 34px; height: 34px; fill: #fff; }
+  .pulse::before, .pulse::after { content: ""; position: absolute; inset: 0; border-radius: 50%; border: 2px solid rgba(76,217,100,.55); animation: pulsering 1.8s ease-out infinite; }
+  .pulse::after { animation-delay: .9s; }
+  @keyframes pulsering { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(1.75); opacity: 0; } }
+  @keyframes shake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-1.5px); } 75% { transform: translateX(1.5px); } }
+  #incoming.ringing .callbg { animation: shake .7s ease-in-out infinite; }
+
+  /* ========= 通话中 ========= */
+  #incall .transcripts { position: absolute; top: 37%; left: 16px; right: 16px; bottom: 362px; overflow-y: auto;
+                         display: flex; flex-direction: column; gap: 8px; z-index: 2; scrollbar-width: none; }
+  #incall .transcripts::-webkit-scrollbar { display: none; }
+  .bub { max-width: 80%; padding: 9px 13px; border-radius: 15px; font-size: 14.5px; line-height: 1.55; white-space: pre-wrap; backdrop-filter: blur(6px); }
+  .bub.ai { align-self: flex-start; background: rgba(255,255,255,.16); border-bottom-left-radius: 4px; }
+  .bub.mom { align-self: flex-end; background: rgba(76,217,100,.28); border-bottom-right-radius: 4px; }
+  .bub.sys { align-self: center; background: none; color: #7d929e; font-size: 12px; padding: 2px; }
+
+  .grid { position: absolute; bottom: 0; left: 0; right: 0; padding: 0 26px 40px; z-index: 3; }
+  .grow { display: flex; justify-content: space-between; margin-bottom: 26px; align-items: flex-end; }
+  .gbtn { display: flex; flex-direction: column; align-items: center; gap: 7px; cursor: pointer; width: 74px; }
+  .gbtn .c { width: 62px; height: 62px; border-radius: 50%; background: rgba(255,255,255,.14); backdrop-filter: blur(6px);
+             display: flex; align-items: center; justify-content: center; transition: all .15s; }
+  .gbtn .c:active { transform: scale(.9); }
+  .gbtn .c svg { width: 26px; height: 26px; fill: #eef4f7; }
+  .gbtn .t { font-size: 12.5px; color: #dfe8ec; }
+  .gbtn.rec-on .c { background: #f4543f; animation: recblink 1.1s infinite; }
+  .gbtn.rec-on .t { color: #ffb4a8; }
+  @keyframes recblink { 50% { opacity: .55; } }
+  .gbtn.listen-on .c { background: #2f9d6b; animation: listenpulse 1.6s ease-out infinite; }
+  .gbtn.listen-on .t { color: #9fe8bd; }
+  @keyframes listenpulse { 0% { box-shadow: 0 0 0 0 rgba(76,217,100,.45); } 100% { box-shadow: 0 0 0 14px rgba(76,217,100,0); } }
+  #meter { height: 4px; background: rgba(255,255,255,.12); border-radius: 2px; margin: 0 10px 10px; overflow: hidden; display: none; }
+  #meter.on { display: block; }
+  #meter i { display: block; height: 100%; width: 0; background: #4cd964; border-radius: 2px; transition: width .06s; }
+  .gbtn.hang .c { width: 70px; height: 70px; background: #f4543f; }
+  .gbtn.hang .c svg { transform: rotate(135deg); width: 32px; height: 32px; }
+  .gbtn.hang { animation: hangswing 2.4s ease-in-out infinite; }
+  @keyframes hangswing { 0%,100% { transform: rotate(0); } 8% { transform: rotate(-9deg); } 16% { transform: rotate(9deg); } 24% { transform: rotate(0); } }
+
+  .typeline { text-align: center; margin-bottom: 14px; }
+  .typeline button { background: none; border: none; color: #7d929e; font-size: 12.5px; cursor: pointer; text-decoration: underline; }
+  #textrow { display: none; gap: 8px; margin-bottom: 16px; }
+  #textrow.on { display: flex; }
+  #textrow input { flex: 1; background: rgba(255,255,255,.12); border: none; border-radius: 12px; padding: 11px 13px; color: #fff; font-size: 14px; outline: none; }
+  #textrow input::placeholder { color: #8ea0ab; }
+  #textrow button { border: none; border-radius: 12px; background: #4caf7d; color: #fff; padding: 0 18px; cursor: pointer; }
+
+  /* ========= 结果弹窗 ========= */
+  #result { position: absolute; inset: 0; background: rgba(8,12,16,.72); backdrop-filter: blur(4px); z-index: 20;
+            display: none; align-items: center; justify-content: center; padding: 18px; }
+  #result.on { display: flex; }
+  #result .card { background: #fff; color: #5c3a1a; border-radius: 20px; padding: 24px; width: 100%; max-height: 88%; overflow-y: auto; }
+  #result h3 { color: #7a4a21; margin-bottom: 12px; font-size: 17px; }
+  #result .sum { background: #faf3e8; border-radius: 12px; padding: 12px; font-size: 14px; line-height: 1.7; margin-bottom: 12px; }
+  .chip { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 13px; margin: 2px 4px 6px 0; }
+  .chip.red { background: #fde8e6; color: #c0392b; border: 1px solid #f2b8b3; }
+  .chip.yellow { background: #fdf3d7; color: #b07d10; border: 1px solid #efd98f; }
+  .chip.blue { background: #e8f1fd; color: #2471a3; border: 1px solid #b8d4f0; }
+  .push { margin: 10px 0 14px; padding: 10px 12px; border-radius: 12px; font-size: 13px; line-height: 1.6; }
+  .push.ok { background: #e8f6ee; color: #217a4b; }
+  .push.no { background: #fdf3d7; color: #b07d10; }
+</style>
+</head>
+<body>
+
+<div id="phone">
+
+  <!-- ① 子女侧首页 -->
+  <div class="screen on" id="home">
+    <div class="card">
+      <h1>📞 AI 电话哨兵</h1>
+      <p class="sub">演示：AI 智能外呼独居妈妈</p>
+      <button class="bigbtn green" id="startBtn">▶ 开始外呼演示</button>
+      <button class="bigbtn" style="background:#efe6da;color:#5c3a1a;margin-top:10px;" id="incomingBtn">📲 演示：妈妈主动打给小暖</button>
+      <a class="ghost" href="/static/report.html">📄 查看子女端周报 →</a>
+      <p class="tip">流程：AI 拨号 → 妈妈手机响铃 → 接听陪聊<br>→ 挂断后自动生成摘要与健康提醒</p>
+      <div id="alerts"></div>
+    </div>
+  </div>
+
+  <!-- ② AI 拨号中 -->
+  <div class="screen" id="dialing">
+    <div class="statusbar"><span>02:31</span><div class="recpill"><span class="recdot"></span><span id="pillT1">00:00</span></div>
+      <span class="sright">◌ <span class="batt">58</span></span></div>
+    <div class="avatar">🤖</div>
+    <div class="dialname">小暖</div>
+    <div class="dialstatus">正在呼叫 妈妈的手机<span class="dots"></span></div>
+    <div class="foot">AI 电话哨兵 · 替在外的儿女每天陪爸妈聊聊天</div>
+  </div>
+
+  <!-- ③ 老人手机来电 -->
+  <div class="screen" id="incoming">
+    <div class="callbg"></div>
+    <div class="statusbar" style="position:relative;"><span>02:31</span>
+      <div class="recpill"><span class="recdot"></span><span id="pillT2">00:00</span></div>
+      <span class="sright">📶 <span class="batt">58</span></span></div>
+    <div class="callerbox">
+      <div class="callername">小暖</div>
+      <div class="callernum">0755 8635-0182</div>
+      <div class="carrier"><span>广东深圳 电信</span></div>
+      <div class="carrier"><span class="hd">2</span><span>中国移动</span></div>
+      <div class="aichip">🤖 AI 智能外呼 · 女儿为妈妈订阅</div>
+    </div>
+    <div class="incombtns">
+      <div class="miniopts">
+        <div class="mini"><div class="c">💬</div><span>短信</span></div>
+        <div class="mini"><div class="c">⏰</div><span>提醒</span></div>
+      </div>
+      <div class="mainopts">
+        <button class="bigc decline" id="declineBtn" title="拒接">
+          <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+        </button>
+        <button class="bigc answer pulse" id="answerBtn" title="接听">
+          <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ④ 通话中 -->
+  <div class="screen" id="incall">
+    <div class="callbg"></div>
+    <div class="statusbar" style="position:relative;"><span>02:31</span>
+      <div class="recpill"><span class="recdot"></span><span id="pillT3">00:00</span></div>
+      <span class="sright">📶 <span class="batt">58</span></span></div>
+    <div class="callerbox" style="margin-top:4%;">
+      <div class="callername" style="font-size:30px;">小暖</div>
+      <div class="carrier" style="margin-top:6px;"><span>广东深圳 电信</span></div>
+      <div class="carrier"><span class="hd">2</span><span class="hd" style="margin:0 4px 0 0;">HD</span><span id="callT">00:00</span></div>
+      <div class="safeline">🛡 智能安全检测中<span class="dots"></span></div>
+    </div>
+
+    <div class="transcripts" id="log"></div>
+
+    <div class="grid">
+      <div id="meter"><i></i></div>
+      <div class="typeline"><button id="typeBtn">没有麦克风？打字代替语音</button><span style="color:#5d707c;"> ｜ 环境吵？按住 <b style="color:#9fe8bd;">空格</b> 说话，松开发送</span></div>
+      <div id="textrow"><input id="textInput" placeholder="输入妈妈想说的话…"><button id="sendBtn">发送</button></div>
+      <div class="grow">
+        <div class="gbtn" id="micBtn"><div class="c"><svg viewBox="0 0 24 24"><path d="M3 11h2v3H3zm4-3h2v9H7zm4-4h2v17h-2zm4 5h2v7h-2zm4 2h2v3h-2z"/></svg></div><span class="t" id="micT">按住说话</span></div>
+        <div class="gbtn"><div class="c"><svg viewBox="0 0 24 24"><path d="M7 5h3v14H7zm7 0h3v14h-3z"/></svg></div><span class="t">等待</span></div>
+        <div class="gbtn"><div class="c"><svg viewBox="0 0 24 24"><path d="M12 4a1.6 1.6 0 0 1 1.6 1.6v4.8h4.8a1.6 1.6 0 1 1 0 3.2h-4.8v4.8a1.6 1.6 0 1 1-3.2 0v-4.8H5.6a1.6 1.6 0 1 1 0-3.2h4.8V5.6A1.6 1.6 0 0 1 12 4z"/></svg></div><span class="t">添加通话</span></div>
+      </div>
+      <div class="grow">
+        <div class="gbtn"><div class="c"><svg viewBox="0 0 24 24"><path d="M4 7a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v3.5l4-3v11l-4-3V17a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7z"/></svg></div><span class="t">视频通话</span></div>
+        <div class="gbtn"><div class="c"><svg viewBox="0 0 24 24"><path d="M12 3a3 3 0 0 1 3 3v5a3 3 0 0 1-6 0V6a3 3 0 0 1 3-3zm-6 8a6 6 0 0 0 5 5.9V20h-2.5a1 1 0 1 0 0 2h7a1 1 0 1 0 0-2H13v-3.1A6 6 0 0 0 18 11a1 1 0 1 0-2 0 4 4 0 1 1-8 0 1 1 0 1 0-2 0z"/></svg></div><span class="t">静音</span></div>
+        <div class="gbtn"><div class="c"><svg viewBox="0 0 24 24"><path d="M9 11a3.2 3.2 0 1 0 0-6.4A3.2 3.2 0 0 0 9 11zm7 .4a2.7 2.7 0 1 0 0-5.4 2.7 2.7 0 0 0 0 5.4zM9 13c-2.7 0-6 1.35-6 4v1.6a.9.9 0 0 0 .9.9h10.2a.9.9 0 0 0 .9-.9V17c0-2.65-3.3-4-6-4zm7 .6c-.5 0-1.05.06-1.6.18 1.16.87 1.9 2.02 1.9 3.22v1.5h4.8a.9.9 0 0 0 .9-.9V17c0-2.2-3-3.4-6-3.4z"/></svg></div><span class="t">联系人</span></div>
+      </div>
+      <div class="grow" style="margin-bottom:0;">
+        <div class="gbtn"><div class="c"><svg viewBox="0 0 24 24"><path d="M6 4h3l1.5 4.5L8.6 10a12.5 12.5 0 0 0 5.4 5.4l1.5-1.9L20 15v3a2 2 0 0 1-2 2A16 16 0 0 1 4 6a2 2 0 0 1 2-2z"/></svg></div><span class="t">键盘</span></div>
+        <div class="gbtn hang" id="hangBtn"><div class="c"><svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg></div><span class="t">挂断</span></div>
+        <div class="gbtn"><div class="c"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4zm12.5 3a3.5 3.5 0 0 0-2-3.15v6.3a3.5 3.5 0 0 0 2-3.15zm-2-7.6v2.1a6 6 0 0 1 0 11v2.1a8 8 0 0 0 0-15.2z"/></svg></div><span class="t">免提</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ⑤ 结果弹窗 -->
+  <div id="result">
+    <div class="card">
+      <h3>✅ 通话已结束，AI 已完成整理</h3>
+      <div class="sum" id="rSum"></div>
+      <div id="rSigs"></div>
+      <div id="rPush"></div>
+      <button class="bigbtn green" onclick="location.href='/static/report.html'">查看子女端周报 →</button>
+      <button class="bigbtn" style="background:#efe6da;color:#7a5c3a;margin-top:10px;" id="againBtn">再演示一遍（重置数据）</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const show = id => document.querySelectorAll('.screen').forEach(s => s.classList.remove('on')) || $(id).classList.add('on');
+
+/* ---------- 音效 ---------- */
+const sDial = new Audio('/static/sounds/dial-tone.wav');  sDial.loop = true;  sDial.volume = .5;
+const sRing = new Audio('/static/sounds/ringback.wav');   sRing.loop = true;  sRing.volume = .55;
+const sDtmf = new Audio('/static/sounds/dtmf.wav');       sDtmf.volume = .6;
+const stop = a => { a.pause(); try { a.currentTime = 0; } catch(e){} };
+
+/* ---------- 通用 ---------- */
+let callId = null, playing = false, busy = false;
+let realtime = false, listenStream = null, recordStream = null, analyser = null, vadTimer = null;
+let capRecorder = null, capChunks = [], capturing = false, manualHold = false;
+let loudFrames = 0, quietFrames = 0, calibFrames = 0, ambient = 0.006, capStart = 0;
+let _audioCtx = null;
+const audioCtx = () => _audioCtx || (_audioCtx = new (window.AudioContext || window.webkitAudioContext)());
+let pillTimer = null, callTimer = null, callSec = 0, sessionSec = 0;
+const fmt = s => String(Math.floor(s/60)).padStart(2,'0') + ':' + String(s%60).padStart(2,'0');
+function startPill(){ stopPill(); sessionSec = 0; pillTimer = setInterval(() => { sessionSec++;
+  ['pillT1','pillT2','pillT3'].forEach(id => $(id).textContent = fmt(sessionSec)); }, 1000); }
+function stopPill(){ clearInterval(pillTimer); }
+function startCallTimer(){ callSec = 0; $('callT').textContent = '00:00';
+  callTimer = setInterval(() => { callSec++; $('callT').textContent = fmt(callSec); }, 1000); }
+function stopCallTimer(){ clearInterval(callTimer); }
+function bubble(cls, text){ const d = document.createElement('div'); d.className = 'bub ' + cls;
+  d.textContent = text; $('log').appendChild(d); $('log').scrollTop = 1e9; return d; }
+function play(url){ if (!url) return Promise.resolve(); playing = true;
+  return new Promise(res => { const a = new Audio(url);
+    a.onended = () => { playing = false; res(); }; a.onerror = () => { playing = false; res(); }; a.play(); }); }
+async function api(path, body){ const r = await fetch(path, { method: 'POST', body });
+  if (!r.ok) { const e = await r.json().catch(() => ({ detail: r.statusText })); throw new Error(e.detail || JSON.stringify(e)); } return r.json(); }
+
+/* ---------- 流程 ---------- */
+$('startBtn').onclick = () => { sDial.play().catch(()=>{}); startPill(); show('dialing');
+  setTimeout(toIncoming, 2600); };
+
+function toIncoming(){ stop(sDial); show('incoming'); $('incoming').classList.add('ringing'); sRing.play().catch(()=>{}); }
+
+$('answerBtn').onclick = async () => {
+  $('incoming').classList.remove('ringing'); stop(sRing); sDtmf.play().catch(()=>{});
+  $('answerBtn').disabled = true; show('incall'); startCallTimer();
+  bubble('sys', `${new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})} 已接通 · 免提`);
+  try {
+    const d = await api('/api/call/start'); callId = d.call_id;
+    bubble('ai', d.greeting); await play(d.audio);
+    if (callId && !realtime) { bubble('sys', '🎧 实时聆听已开启：自然说话，停顿即发送；嘈杂时按住空格说话'); setMic(true); }
+  } catch (e) { bubble('sys', '接通失败：' + e.message); }
+  $('answerBtn').disabled = false;
+};
+
+$('declineBtn').onclick = () => { stop(sRing); sDtmf.play().catch(()=>{}); stopPill(); goHome(); };
+
+$('incomingBtn').onclick = async () => {
+  $('incomingBtn').disabled = true;
+  try {
+    const d = await api('/api/call/incoming'); callId = d.call_id;
+    show('incall'); startCallTimer();
+    bubble('sys', `${new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})} 妈妈主动来电 · 小暖惊喜接起`);
+    bubble('ai', d.greeting); await play(d.audio);
+    if (callId && !realtime) { bubble('sys', '🎧 实时聆听已开启：自然说话，停顿即发送'); setMic(true); }
+  } catch (e) { bubble('sys', '接听失败：' + e.message); }
+  $('incomingBtn').disabled = false;
+};
+
+/* ---------- 通话内交互：实时对话引擎 ---------- */
+function setMicUI(state){
+  const btn = $('micBtn'), t = $('micT');
+  btn.classList.remove('rec-on','listen-on');
+  $('meter').classList.toggle('on', state !== 'idle');
+  if (state === 'listen') { btn.classList.add('listen-on'); t.textContent = '聆听中，请说话…'; }
+  else if (state === 'cap') { btn.classList.add('rec-on'); t.textContent = '说完停顿即发送'; }
+  else if (state === 'think') { t.textContent = '小暖思考中…'; }
+  else t.textContent = '点这里开启实时对话';
+}
+
+function rms(){ if (!analyser) return 0; const buf = new Float32Array(analyser.fftSize);
+  analyser.getFloatTimeDomainData(buf);
+  let s = 0; for (let i = 0; i < buf.length; i++) s += buf[i] * buf[i];
+  return Math.sqrt(s / buf.length); }
+
+function vadTick(){
+  if (busy || playing) { $('meter').firstElementChild.style.width = '0'; return; }
+  const v = rms();
+  $('meter').firstElementChild.style.width = Math.min(100, v * 600) + '%';
+  const thresh = Math.max(ambient * 2.8, 0.015);
+  if (manualHold) { quietFrames = 0; loudFrames = 0; return; }   // 空格键按住时不自动断句
+  if (calibFrames > 0) { ambient = Math.min(ambient, Math.max(v, 0.003)); calibFrames--; return; }
+  if (v > thresh) { loudFrames++; quietFrames = 0;
+    if (!capturing && loudFrames >= 4) startCapture();                 // 连续有声 → 开始记录
+  } else {
+    quietFrames++; loudFrames = 0;
+    if (capturing && quietFrames >= 22) finishCapture();               // 静音 ~1.3s → 自动断句
+    if (capturing && Date.now() - capStart > 20000) finishCapture();   // 单句最长 20s
+  }
+}
+
+function startCapture(){
+  capChunks = []; capturing = true; capStart = Date.now();
+  capRecorder = new MediaRecorder(recordStream || listenStream);   // 优先用带通滤波后的流
+  capRecorder.ondataavailable = e => { if (e.data.size) capChunks.push(e.data); };
+  capRecorder.onstop = () => {
+    const raw = new Blob(capChunks);
+    if (raw.size && callId && realtime) {
+      raw.arrayBuffer().then(b => audioCtx().decodeAudioData(b))
+        .then(audio => { const fd = new FormData(); fd.append('call_id', callId);
+                         fd.append('audio', encodeWav(audio), 'speech.wav'); turn(fd); })
+        .catch(err => bubble('sys', '录音转码失败：' + err.message));
+    }
+  };
+  capRecorder.start(250);
+  setMicUI('cap');
+}
+
+function finishCapture(){ capturing = false; setMicUI('think'); try { capRecorder.stop(); } catch(e){} }
+
+/* 任意格式录音 → 16bit 单声道 WAV（彻底消除 webm 兼容问题） */
+function encodeWav(audio){
+  const len = audio.length, ch = audio.numberOfChannels;
+  const mix = new Float32Array(len);
+  for (let c = 0; c < ch; c++){ const d = audio.getChannelData(c);
+    for (let i = 0; i < len; i++) mix[i] += d[i] / ch; }
+  const out = new ArrayBuffer(44 + len * 2), v = new DataView(out);
+  const ws = (o,s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
+  ws(0,'RIFF'); v.setUint32(4, 36 + len * 2, true); ws(8,'WAVE'); ws(12,'fmt ');
+  v.setUint32(16,16,true); v.setUint16(20,1,true); v.setUint16(22,1,true);
+  v.setUint32(24, audio.sampleRate, true); v.setUint32(28, audio.sampleRate * 2, true);
+  v.setUint16(32,2,true); v.setUint16(34,16,true); ws(36,'data'); v.setUint32(40, len * 2, true);
+  for (let i = 0; i < len; i++){ const s = Math.max(-1, Math.min(1, mix[i]));
+    v.setInt16(44 + i * 2, s < 0 ? s * 0x8000 : s * 0x7FFF, true); }
+  return new Blob([out], { type: 'audio/wav' });
+}
+
+async function setMic(on){
+  if (on) {
+    // 回声消除 + 噪声抑制 + 自动增益：浏览器 WebRTC 自带的音频前处理
+    try { listenStream = await navigator.mediaDevices.getUserMedia({ audio: {
+      echoCancellation: true, noiseSuppression: true, autoGainControl: true, channelCount: 1 } }); }
+    catch (e) { bubble('sys', '无法使用麦克风（' + (e.name || e.message) + '），已切换打字模式');
+                $('typeBtn').click(); return; }
+    const ctx = audioCtx(); try { ctx.resume(); } catch(e){}
+    const src = ctx.createMediaStreamSource(listenStream);
+    // 带通滤波只留人声频段：滤掉风扇/电流低频与高频嘶嘶声（同时作用于聆听判断和录音内容）
+    const hp = ctx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 180;
+    const lp = ctx.createBiquadFilter(); lp.type = 'lowpass';  lp.frequency.value = 3200;
+    analyser = ctx.createAnalyser(); analyser.fftSize = 512; analyser.smoothingTimeConstant = 0.25;
+    src.connect(hp); hp.connect(lp); lp.connect(analyser);
+    const dest = ctx.createMediaStreamDestination(); lp.connect(dest);
+    recordStream = dest.stream;
+    realtime = true; capturing = false; loudFrames = 0; quietFrames = 0; calibFrames = 10;
+    setMicUI('listen');
+    vadTimer = setInterval(vadTick, 60);
+  } else {
+    realtime = false; clearInterval(vadTimer);
+    if (capturing) { capturing = false; try { capRecorder.stop(); } catch(e){} }
+    if (listenStream) { listenStream.getTracks().forEach(t => t.stop()); listenStream = null; }
+    recordStream = null;
+    setMicUI('idle');
+  }
+}
+
+/* 保命开关：环境嘈杂时按住【空格】说话，松开发送（PTT） */
+let spaceHeld = false;
+document.addEventListener('keydown', e => {
+  if (e.code !== 'Space' || spaceHeld || !callId || busy || playing) return;
+  const tag = (document.activeElement || {}).tagName;
+  if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+  e.preventDefault(); spaceHeld = true; manualHold = true;
+  const begin = () => { if (!capturing) { loudFrames = 0; quietFrames = 0; calibFrames = 0; startCapture(); } };
+  if (!realtime) setMic(true).then(begin); else begin();
+});
+document.addEventListener('keyup', e => {
+  if (e.code !== 'Space' || !spaceHeld) return;
+  e.preventDefault(); spaceHeld = false; manualHold = false;
+  if (capturing) finishCapture();
+});
+
+$('micBtn').onclick = () => { if (!callId || playing || busy) return;
+  if (!realtime) { bubble('sys', '🎧 实时对话已开启：请自然说话，停顿一下小暖就会回答'); setMic(true); }
+  else setMic(false); };
+
+async function turn(form){
+  busy = true;
+  const t = bubble('sys', capturing ? '识别完成，小暖思考中…' : '小暖思考中…');
+  try {
+    const d = await api('/api/call/turn', form);
+    t.remove();
+    if (d.you) bubble('mom', d.you);
+    bubble('ai', d.reply);
+    await play(d.audio);
+    if (d.wrap) bubble('sys', '小暖准备说再见啦…');
+  } catch (e) { t.remove(); bubble('sys', '出错了：' + e.message); }
+  busy = false;
+  if (realtime && callId) {                                   // 回答完毕，等外放余音散掉再继续聆听
+    setTimeout(() => { if (realtime && callId && !busy && !playing) {
+      capturing = false; loudFrames = 0; quietFrames = 0; calibFrames = 8; setMicUI('listen'); } }, 700);
+  } else setMicUI('idle');
+}
+
+$('typeBtn').onclick = () => { const r = $('textrow'); r.classList.toggle('on'); if (r.classList.contains('on')) $('textInput').focus(); };
+$('sendBtn').onclick = () => { const t = $('textInput').value.trim(); if (!t || !callId) return;
+  $('textInput').value = ''; const fd = new FormData(); fd.append('call_id', callId); fd.append('text', t); turn(fd); };
+$('textInput').addEventListener('keydown', e => { if (e.key === 'Enter') $('sendBtn').click(); });
+
+/* ---------- 挂断 ---------- */
+$('hangBtn').onclick = async () => {
+  if (!callId) { goHome(); return; }
+  if (realtime) setMic(false);
+  stopCallTimer(); stopPill(); sDtmf.play().catch(()=>{});
+  $('hangBtn').style.pointerEvents = 'none';
+  try {
+    const fd = new FormData(); fd.append('call_id', callId);
+    const d = await api('/api/call/end', fd);
+    $('rSum').textContent = '📋 ' + d.summary
+      + (d.quote ? `\n💬 “${d.quote}”` : '')
+      + `\n😊 情绪 ${'★'.repeat(d.emotion)}${'☆'.repeat(5-d.emotion)} · 通话 ${fmt(d.duration)}`;
+    $('rSigs').innerHTML = d.signals.length
+      ? '🩺 检测到健康相关提及：<br>' + d.signals.map(s =>
+          `<span class="chip ${s.level}">${({red:'🔴 急需关注',yellow:'🟡 建议留意',blue:'🔵 一般'})[s.level]||'🔵'} · ${s.keyword}</span>`).join('')
+      : '<span class="chip blue">本次通话未检测到健康异常</span>';
+    $('rPush').innerHTML = d.pushed
+      ? `<div class="push ok">📲 今日通话简报已推送到儿子（建国）的微信！看他手机 ↑<br>（摘要 + 金句 + 健康提醒，每通电话都会推）</div>`
+      : `<div class="push no">⚠️ 微信推送失败或未配置，简报内容已打印到后端控制台</div>`;
+    $('result').classList.add('on');
+  } catch (e) { alert('结束失败：' + e.message); }
+  $('hangBtn').style.pointerEvents = '';
+};
+
+$('againBtn').onclick = async () => { try { await fetch('/api/demo/reset', { method: 'POST' }); } catch(e){}
+  $('result').classList.remove('on'); $('log').innerHTML = ''; callId = null; goHome(); };
+
+function goHome(){ if (realtime) setMic(false); show('home'); $('log').innerHTML = ''; callId = null;
+  ['pillT1','pillT2','pillT3'].forEach(id => $(id).textContent = '00:00'); }
+
+/* ---------- 启动自检 ---------- */
+fetch('/api/config').then(r => r.json()).then(c => {
+  if (!c.llm_ready) $('alerts').innerHTML = '<span class="warn">⚠️ 未配置 LLM_API_KEY，请填写 .env 后重启服务</span>';
+}).catch(()=>{});
+
+/* ---------- 每日定时来电：页面开着时，到点自动响铃 ---------- */
+setInterval(async () => {
+  if (callId || playing || recording) return;
+  try {
+    const d = await (await fetch('/api/poll')).json();
+    if (d.due && !$('incoming').classList.contains('on')) toIncoming();
+  } catch (e) {}
+}, 20000);
+</script>
+</body>
+</html>

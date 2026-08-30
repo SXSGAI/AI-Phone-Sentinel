@@ -1,0 +1,21 @@
+{
+  "call_name": "",
+  "name": "",
+  "child_name": "",
+  "fresh_start": true,
+  "age": 70,
+  "profession": "",
+  "hobbies": [],
+  "family": {},
+  "taboo": [],
+  "health_notes": [],
+  "style": "",
+  "weekly_quote": "",
+  "call_time": "19:00",
+  "persona": {
+    "style": "",
+    "dialect": "普通话",
+    "topics": "",
+    "custom": ""
+  }
+}

@@ -1,0 +1,30 @@
+# 密钥与环境（绝不提交）
+.env
+*.pem
+
+# 运行时数据（每台设备自己的记忆与记录）
+demo.db
+persona_card.json
+*.log
+server.log
+
+# Python
+__pycache__/
+*.pyc
+venv/
+
+# Android 构建产物
+android-app/.gradle/
+android-app/build/
+android-app/app/build/
+android-app/local.properties
+*.apk
+
+# 网页运行时缓存
+static/cache/
+
+# IDE / 系统
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
