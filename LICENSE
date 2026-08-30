@@ -1,21 +1,61 @@
-MIT License
+小暖 · AI 电话哨兵 开源许可协议
+XiaoNuan AI Phone Sentinel License
+（基于 MIT 许可协议修改，附加商用限制条款）
 
 Copyright (c) 2026 SXSGAI
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+一、定义
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+1.1 "本软件"：指本仓库中包含的全部源代码、资源文件与文档。
+1.2 "商用"：指将本软件或其修改版本直接或间接用于获取商业利益的行为，
+    包括但不限于：销售、SaaS 服务运营、集成到付费产品或服务中、
+    以本软件为基础向第三方提供收费的养老陪伴/呼叫服务，
+    以及为本软件提供付费部署、定制或技术支持。
+1.3 "版权持有者"：SXSGAI（联系邮箱：1989104637@qq.com）。
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+二、授权条款
+
+2.1 在满足以下全部条件的前提下，任何人可免费获得本软件的副本，
+    并不受限制地处理本软件——包括使用、复制、修改、合并、发布、
+    分发、再授权和/或销售副本：
+
+    (a) 个人学习、研究、兴趣爱好等非商业用途；
+    (b) 教学与学术研究（论文、课程、实验）；
+    (c) 非营利性的公益活动（需保留本声明）。
+
+2.2 上述所有副本或重要部分均必须包含本版权声明与本许可协议全文。
+
+2.3 商业授权：任何形式的"商用"（见 1.2 定义）必须事先获得
+    版权持有者的书面授权。未经书面授权的商用行为属于侵权，
+    版权持有者保留追究法律责任的权利。
+
+2.4 商业授权请联系：1989104637@qq.com
+    （请注明使用场景、规模与联系方式，通常 3 个工作日内回复。）
+
+三、免责声明
+
+本软件按"现状"提供，不附带任何明示或暗示的担保，包括但不限于
+适销性和特定用途适用性的暗示担保。在任何情况下，版权持有者均不对
+因使用本软件而产生的任何索赔、损害或其他责任负责。
+
+特别提示：本软件面向老年群体的陪伴场景，不构成任何医疗服务或
+医疗建议；涉及健康与安全的信息仅为生活观察参考。
+
+四、其他
+
+4.1 感谢 KIMI（Moonshot AI）、小米 MiMo 等模型与 API 服务商，
+    以及 Icons8 / Google Material Icons 的图标素材。
+4.2 本协议以中文版本为准。
+
+-------------------------------------------------------------------------------
+
+English Summary (Chinese version prevails)
+
+This software is licensed free of charge for PERSONAL, ACADEMIC AND
+NON-COMMERCIAL USE only, provided the copyright notice and this license
+are included in all copies. ANY COMMERCIAL USE — including selling the
+software, operating it as a paid service, or integrating it into paid
+products — requires prior WRITTEN AUTHORIZATION from the copyright
+holder (SXSGAI). Contact: 1989104637@qq.com
+
+The software is provided "as is", without warranty of any kind.
